@@ -1,5 +1,7 @@
 package org.chess.mainservice.controller;
 
+import org.chess.mainservice.dto.UserCreateDto;
+import org.chess.mainservice.dto.UserGetDto;
 import org.chess.mainservice.model.User;
 import org.chess.mainservice.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -19,13 +21,13 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserGetDto>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User savedUser = userService.createUser(user);
+    public ResponseEntity<UserGetDto> createUser(@RequestBody UserCreateDto user) {
+        UserGetDto savedUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 }
