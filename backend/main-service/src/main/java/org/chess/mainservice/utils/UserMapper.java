@@ -11,7 +11,11 @@ public class UserMapper {
         return new User(userCreateDto.getUsername(), userCreateDto.getEmail(), userCreateDto.getPasswordHash());
     }
 
-    public UserGetDto toDto(User user) {
+    public UserCreateDto toCreteDto(User user) {
+        return new UserCreateDto(user.getUsername(), user.getEmail(), user.getPasswordHash());
+    }
+
+    public UserGetDto toGetDto(User user) {
         return new UserGetDto(user.getUsername(), user.getEmail());
     }
 }
