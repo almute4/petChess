@@ -1,0 +1,38 @@
+# Зависимости (самое важное!)
+node_modules/
+
+# Результаты сборки
+dist/
+build/
+*.local
+
+# Переменные окружения
+.env
+.env.local
+.env.*.local
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Логи
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Кэш
+.cache/
+.parcel-cache/
+
+# TypeScript
+*.tsbuildinfo
+
+# Опционально: если используете тестирование
+coverage/
