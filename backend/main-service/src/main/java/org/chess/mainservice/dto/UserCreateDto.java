@@ -1,5 +1,6 @@
 package org.chess.mainservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -16,6 +17,7 @@ public class UserCreateDto {
 
     @NotBlank(message = "Password can't be blank")
     @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters long")
+    @JsonProperty("password_hash")
     private String passwordHash;
 
     public UserCreateDto() {
