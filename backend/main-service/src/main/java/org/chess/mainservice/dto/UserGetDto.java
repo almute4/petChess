@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public class UserGetDto {
+    private Long id;
+
     @NotBlank(message = "Username can't be blank")
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters long")
     private String username;
@@ -17,9 +19,18 @@ public class UserGetDto {
     public UserGetDto() {
     }
 
-    public UserGetDto(String username, String email) {
+    public UserGetDto(Long id, String username, String email) {
+        this.id = id;
         this.username = username;
         this.email = email;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUsername() {

@@ -1,6 +1,6 @@
 package org.chess.mainservice.controller;
 
-import org.chess.mainservice.dto.UserCreateDto;
+import org.chess.mainservice.dto.UserUpsertDto;
 import org.chess.mainservice.dto.UserGetDto;
 import org.chess.mainservice.service.impl.UserServiceImpl;
 import org.springframework.http.HttpStatus;
@@ -24,9 +24,20 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<UserGetDto> getUserById(@PathVariable(name = "id") Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
+
     @PostMapping
-    public ResponseEntity<UserGetDto> createUser(@RequestBody UserCreateDto user) {
+    public ResponseEntity<UserGetDto> createUser(@RequestBody UserUpsertDto user) {
         UserGetDto savedUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserGetDto> updateUserById(@PathVariable(name = "id") Long id, @RequestBody UserUpsertDto userUpsertDto) {
+        UserGetDto updatedUser = userService.updateUserById(id, userUpsertDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedUser);
     }
 }
