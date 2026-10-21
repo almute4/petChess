@@ -1,6 +1,7 @@
 package org.chess.mainservice.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.chess.mainservice.dto.UserUpsertDto;
 import org.chess.mainservice.dto.UserGetDto;
 import org.chess.mainservice.model.User;
@@ -45,5 +46,29 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
         UserGetDto userGetDto = userMapper.toGetDto(user);
         return userGetDto;
+    }
+
+
+    @Override
+    @Transactional
+    public UserGetDto updateUserById(Long id, UserUpsertDto userUpsertDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+
+        if (!user.getUsername().equals(userUpsertDto.getUsername()) &&
+                userRepository.existsByUsername(userUpsertDto.getUsername())) {
+            throw new IllegalArgumentException("Username is already taken");
+        }
+
+        if (!user.getEmail().equals(userUpsertDto.getEmail()) &&
+                userRepository.existsByEmail(userUpsertDto.getEmail())) {
+            throw new IllegalArgumentException("Email is already taken");
+        }
+
+        user.setUsername(userUpsertDto.getUsername());
+        user.setEmail(userUpsertDto.getEmail());
+        user.setPasswordHash(userUpsertDto.getPasswordHash());
+
+        return userMapper.toGetDto(user);
     }
 }

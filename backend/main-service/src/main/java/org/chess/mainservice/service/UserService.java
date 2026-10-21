@@ -11,4 +11,6 @@ public interface UserService {
     public UserGetDto createUser(UserUpsertDto userUpsertDto);
 
     public UserGetDto getUserById(Long id);
+
+    public UserGetDto updateUserById(Long id, UserUpsertDto userUpsertDto);
 }
