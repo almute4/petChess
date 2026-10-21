@@ -1,7 +1,7 @@
 package org.chess.mainservice.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.chess.mainservice.dto.UserCreateDto;
+import org.chess.mainservice.dto.UserUpsertDto;
 import org.chess.mainservice.dto.UserGetDto;
 import org.chess.mainservice.model.User;
 import org.chess.mainservice.repository.UserRepository;
@@ -33,8 +33,8 @@ public class UserServiceImpl implements UserService {
         return userDtos;
     }
 
-    public UserGetDto createUser(UserCreateDto userCreateDto) {
-        User newUser = userMapper.toEntity(userCreateDto);
+    public UserGetDto createUser(UserUpsertDto userUpsertDto) {
+        User newUser = userMapper.toEntity(userUpsertDto);
         User userCreated = userRepository.save(newUser);
 
         return userMapper.toGetDto(userCreated);

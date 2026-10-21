@@ -1,6 +1,6 @@
 package org.chess.mainservice.controller;
 
-import org.chess.mainservice.dto.UserCreateDto;
+import org.chess.mainservice.dto.UserUpsertDto;
 import org.chess.mainservice.dto.UserGetDto;
 import org.chess.mainservice.service.impl.UserServiceImpl;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserGetDto> createUser(@RequestBody UserCreateDto user) {
+    public ResponseEntity<UserGetDto> createUser(@RequestBody UserUpsertDto user) {
         UserGetDto savedUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
