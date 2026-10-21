@@ -19,11 +19,12 @@ public class UserGetDto {
     public UserGetDto() {
     }
 
-    public UserGetDto(String username, String email) {
+    public UserGetDto(Long id, String username, String email) {
+        this.id = id;
         this.username = username;
         this.email = email;
     }
-    
+
     public Long getId() {
         return id;
     }

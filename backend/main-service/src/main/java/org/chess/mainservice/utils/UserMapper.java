@@ -16,6 +16,6 @@ public class UserMapper {
     }
 
     public UserGetDto toGetDto(User user) {
-        return new UserGetDto(user.getUsername(), user.getEmail());
+        return new UserGetDto(user.getId(), user.getUsername(), user.getEmail());
     }
 }
