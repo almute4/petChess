@@ -35,6 +35,8 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserGetDto createUser(UserUpsertDto userUpsertDto) {
+        
+
         User newUser = userMapper.toEntity(userUpsertDto);
         User userCreated = userRepository.save(newUser);
 
@@ -70,5 +72,9 @@ public class UserServiceImpl implements UserService {
         user.setPasswordHash(userUpsertDto.getPasswordHash());
 
         return userMapper.toGetDto(user);
+    }
+
+    private Boolean isUsernameOrEmailUsed(String username, String email) {
+        return userRepository.existsByUsername(username) || userRepository.existsByEmail(email);
     }
 }
