@@ -20,7 +20,11 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) {
         httpSecurity
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/").permitAll()
+                        .requestMatchers(
+                                "/api/auth/register", // <-- ЭТОТ ПУТЬ ДОЛЖЕН БЫТЬ ЗДЕСЬ
+                                "/api/auth/login",
+                                "/error"
+                        ).permitAll()
                         .anyRequest().authenticated())
                 .formLogin((form) -> form
                         .loginPage("/login")
@@ -33,12 +37,5 @@ public class SecurityConfig {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    UserDetailsService userDetailsService(PasswordEncoder encoder) {
-        String password = encoder.encode("password");
-        UserDetails user = User.withUsername("user").password(password).roles("USER").build();
-        return new InMemoryUserDetailsManager(user);
     }
 }
