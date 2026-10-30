@@ -19,6 +19,11 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PostMapping("/registration")
+    public ResponseEntity<UserGetDto> createUser(@RequestBody UserUpsertDto userUpsertDto) {
+        return ResponseEntity.ok(userService.createUser(userUpsertDto));
+    }
+
     @GetMapping
     public ResponseEntity<List<UserGetDto>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
