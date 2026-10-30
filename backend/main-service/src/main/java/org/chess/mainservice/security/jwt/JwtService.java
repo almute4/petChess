@@ -1,4 +1,4 @@
-package org.chess.mainservice.security;
+package org.chess.mainservice.security.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
