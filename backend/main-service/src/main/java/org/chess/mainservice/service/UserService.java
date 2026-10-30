@@ -1,16 +1,20 @@
 package org.chess.mainservice.service;
 
-import org.chess.mainservice.dto.UserUpsertDto;
-import org.chess.mainservice.dto.UserGetDto;
+import org.chess.mainservice.dto.*;
 
+import javax.naming.AuthenticationException;
 import java.util.List;
 
 public interface UserService {
-    public List<UserGetDto> getAllUsers();
+    JwtAuthenticationDto signIn(UserCredentialsDto userCredentialsDto) throws AuthenticationException;
 
-    public UserGetDto createUser(UserUpsertDto userUpsertDto);
+    JwtAuthenticationDto refreshToken(RefreshTokenDto refreshTokenDto) throws Exception;
 
-    public UserGetDto getUserById(Long id);
+    List<UserGetDto> getAllUsers();
 
-    public UserGetDto updateUserById(Long id, UserUpsertDto userUpsertDto);
+    UserGetDto createUser(UserUpsertDto userUpsertDto);
+
+    UserGetDto getUserById(Long id);
+
+    UserGetDto updateUserById(Long id, UserUpsertDto userUpsertDto);
 }
