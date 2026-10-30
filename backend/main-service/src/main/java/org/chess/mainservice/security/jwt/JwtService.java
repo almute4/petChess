@@ -19,7 +19,7 @@ import java.util.Date;
 public class JwtService {
 
     private static final Logger LOGGER = LogManager.getLogger(JwtService.class);
-    @Value("jwt-secret-temp")
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
     public JwtAuthenticationDto generateAuthToken(String email) {
@@ -64,7 +64,7 @@ public class JwtService {
         Claims claims = Jwts.parser()
                 .verifyWith(getSignInKey())
                 .build()
-                .parseEncryptedClaims(token)
+                .parseSignedClaims(token)
                 .getPayload();
         return claims.getSubject();
     }

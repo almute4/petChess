@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Spring Boot Local Configs & Secrets ###
+application-local.yml
+application-local.properties
+.env
