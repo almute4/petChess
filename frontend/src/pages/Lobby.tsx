@@ -5,8 +5,8 @@ function Lobby() {
 
   return (
     <div className="lobby-container">
-      <h1>Lobby</h1>
       <div className="lobby-buttons">
+        <h1>Lobby</h1>
         <button
           className="lobby-btn play-btn"
           onClick={() => navigate("/game")}

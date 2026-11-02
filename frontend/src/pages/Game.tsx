@@ -1,15 +1,26 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Piece from "../components/Piece";
 
+// Заглавные буквы - белые фигуры, строчные - чёрные.
 const initialBoard = [
-  ["♜", "♞", "♝", "♛", "♚", "♝", "♞", "♜"],
-  ["", "♟", "♟", "♟", "", "♟", "♟", "♟"],
-  ["♟", "", "", "", "", "", "", ""],
-  ["", "♗", "", "", "♟", "", "", ""],
-  ["", "", "", "", "♙", "", "", ""],
-  ["", "", "", "", "", "♘", "", ""],
-  ["♙", "♙", "♙", "♙", "", "♙", "♙", "♙"],
-  ["♖", "♘", "♗", "♕", "♔", "", "", "♖"],
+  ["r", "", "b", "q", "k", "b", "n", "r"],
+  ["", "p", "p", "p", "", "p", "p", "p"],
+  ["p", "", "n", "", "", "", "", ""],
+  ["", "B", "", "", "p", "", "", ""],
+  ["", "", "", "", "P", "", "", ""],
+  ["", "", "", "", "", "N", "", ""],
+  ["P", "P", "P", "P", "", "P", "P", "P"],
+  ["R", "N", "B", "Q", "K", "", "", "R"],
+];
+
+// Подсветка последнего хода (a7 -> a6): "строка-столбец".
+const lastMoveSquares = new Set(["1-0", "2-0"]);
+
+const moves = [
+  ["e4", "e5"],
+  ["Nf3", "Nc6"],
+  ["Bb5", "a6"],
 ];
 
 function Game() {
@@ -39,22 +50,24 @@ function Game() {
   return (
     <main className="game-container">
       <div className="game-layout">
-        <div className="chessboard" role="img" aria-label="Chess board position after 3 moves">
-          {initialBoard.flatMap((rank, row) =>
-            rank.map((piece, col) => {
-              const isWhite = ["♙", "♖", "♘", "♗", "♕", "♔"].includes(piece);
-              const isPiece = piece !== "";
-              return (
-                <div
-                  key={`${row}-${col}`}
-                  className={`chess-square ${(row + col) % 2 === 0 ? "light" : "dark"}${isPiece && isWhite ? " white-piece" : ""}`}
-                  aria-hidden="true"
-                >
-                  {piece}
-                </div>
-              );
-            }),
-          )}
+        <div className="board-frame">
+          <div className="chessboard" role="img" aria-label="Chess board position after 3 moves">
+            {initialBoard.flatMap((rank, row) =>
+              rank.map((piece, col) => {
+                const shade = (row + col) % 2 === 0 ? "light" : "dark";
+                const highlight = lastMoveSquares.has(`${row}-${col}`) ? " last-move" : "";
+                return (
+                  <div
+                    key={`${row}-${col}`}
+                    className={`chess-square ${shade}${highlight}`}
+                    aria-hidden="true"
+                  >
+                    {piece && <Piece code={piece} />}
+                  </div>
+                );
+              }),
+            )}
+          </div>
         </div>
 
         <aside className="game-sidebar">
@@ -62,9 +75,15 @@ function Game() {
           <section className="moves-section">
             <h3>Moves</h3>
             <div className="moves-list">
-              1. e4&nbsp;&nbsp; e5{"\n"}
-              2. Nf3&nbsp; Nc6{"\n"}
-              3. Bb5&nbsp; a6
+              {moves.map(([white, black], index) => (
+                <div className="move-row" key={index}>
+                  <span className="move-num">{index + 1}.</span>
+                  <span className="move-white">{white}</span>
+                  <span className={`move-black${index === moves.length - 1 ? " move-last" : ""}`}>
+                    {black}
+                  </span>
+                </div>
+              ))}
             </div>
           </section>
           <div className="game-timer">{formatTime(myTime)}</div>
