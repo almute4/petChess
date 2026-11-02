@@ -17,8 +17,8 @@ function Registration() {
 
   return (
     <div className="registration-container">
-      <h1>Registration</h1>
       <form onSubmit={handleRegister}>
+        <h1>Registration</h1>
         <div className="form-group">
           <label>Email</label>
           <input

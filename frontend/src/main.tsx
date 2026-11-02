@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
+import "@fontsource/silkscreen/400.css";
+import "@fontsource/vt323/400.css";
 import "./App.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
