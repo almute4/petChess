@@ -16,8 +16,8 @@ public class UserUpsertDto {
     private String email;
 
     @NotBlank(message = "Password can't be blank")
-    @Size(min = 6, max = 100, message = "`Password must be between 6 and 100 characters long")
-    @JsonProperty("password_hash")
+    @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters long")
+    @JsonProperty("password")
     private String passwordHash;
 
     public UserUpsertDto() {
