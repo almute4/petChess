@@ -2,9 +2,11 @@ package org.chess.mainservice.controller;
 
 import org.chess.mainservice.dto.UserUpsertDto;
 import org.chess.mainservice.dto.UserGetDto;
+import org.chess.mainservice.security.CustomUserDetails;
 import org.chess.mainservice.service.impl.UserServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +29,11 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserGetDto>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserGetDto> getCurrentUser(@AuthenticationPrincipal CustomUserDetails principal) {
+        return ResponseEntity.ok(userService.getUserById(principal.user().getId()));
     }
 
     @GetMapping("/{id}")
