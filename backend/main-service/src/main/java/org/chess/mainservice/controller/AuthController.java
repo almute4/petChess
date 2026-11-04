@@ -23,13 +23,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtAuthenticationDto> signIn(@RequestBody UserCredentialsDto userCredentialsDto) {
-        try {
-            JwtAuthenticationDto jwtAuthenticationDto = userService.signIn(userCredentialsDto);
-            return ResponseEntity.ok(jwtAuthenticationDto);
-        } catch (AuthenticationException e) {
-            throw new RuntimeException("Authentication failed:" + e.getMessage());
-        }
+    public ResponseEntity<JwtAuthenticationDto> signIn(@RequestBody UserCredentialsDto userCredentialsDto)
+            throws AuthenticationException {
+        return ResponseEntity.ok(userService.signIn(userCredentialsDto));
     }
 
     @PostMapping("/refresh")
