@@ -1,22 +1,112 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  getCurrentUser,
+  login,
+  logout,
+  updateUser,
+  type User,
+} from "../api/auth";
+import { ApiError, getErrorMessage } from "../api/client";
+
+type Message = { kind: "ok" | "error"; text: string } | null;
 
 function AccountSettings() {
-  const [name, setName] = useState("KnightRider");
+  const [user, setUser] = useState<User | null>(null);
+  const [name, setName] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [nameMessage, setNameMessage] = useState<Message>(null);
+  const [passwordMessage, setPasswordMessage] = useState<Message>(null);
   const navigate = useNavigate();
 
-  const handleSaveName = () => {
-    console.log("Save name:", name);
+  useEffect(() => {
+    let cancelled = false;
+    getCurrentUser()
+      .then((u) => {
+        if (cancelled) return;
+        setUser(u);
+        setName(u.username);
+      })
+      .catch((err) => {
+        if (!cancelled)
+          setNameMessage({ kind: "error", text: getErrorMessage(err) });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handleSaveName = async () => {
+    if (!user) return;
+    const username = name.trim();
+    // На PUT /api/users/{id} на бэке нет @Valid, поэтому границы проверяем здесь.
+    if (username.length < 3 || username.length > 50) {
+      setNameMessage({
+        kind: "error",
+        text: "Name must be 3-50 characters long",
+      });
+      return;
+    }
+    try {
+      const updated = await updateUser(user.id, {
+        username,
+        email: user.email,
+      });
+      setUser(updated);
+      setName(updated.username);
+      setNameMessage({ kind: "ok", text: "Name saved" });
+    } catch (err) {
+      setNameMessage({ kind: "error", text: getErrorMessage(err) });
+    }
   };
 
-  const handleSavePassword = () => {
-    console.log("Save password:", { currentPassword, newPassword });
+  const handleSavePassword = async () => {
+    if (!user) return;
+    if (!currentPassword || !newPassword) {
+      setPasswordMessage({
+        kind: "error",
+        text: "Fill in both password fields",
+      });
+      return;
+    }
+    if (newPassword.length < 6 || newPassword.length > 100) {
+      setPasswordMessage({
+        kind: "error",
+        text: "New password must be 6-100 characters long",
+      });
+      return;
+    }
+
+    // На бэке нет проверки текущего пароля при смене, поэтому подтверждаем его повторным логином.
+    try {
+      await login(user.email, currentPassword);
+    } catch (err) {
+      const wrong = err instanceof ApiError && err.status === 401;
+      setPasswordMessage({
+        kind: "error",
+        text: wrong ? "Current password is incorrect" : getErrorMessage(err),
+      });
+      return;
+    }
+
+    try {
+      await updateUser(user.id, {
+        username: user.username,
+        email: user.email,
+        password: newPassword,
+      });
+      setCurrentPassword("");
+      setNewPassword("");
+      setPasswordMessage({ kind: "ok", text: "Password changed" });
+    } catch (err) {
+      setPasswordMessage({ kind: "error", text: getErrorMessage(err) });
+    }
   };
 
   const handleLogout = () => {
-    navigate("/", { replace: true });
+    logout();
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -29,10 +119,16 @@ function AccountSettings() {
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          disabled={!user}
         />
-        <button className="btn-save" onClick={handleSaveName}>
+        <button className="btn-save" onClick={handleSaveName} disabled={!user}>
           Save name
         </button>
+        {nameMessage && (
+          <p className={`form-message ${nameMessage.kind}`}>
+            {nameMessage.text}
+          </p>
+        )}
       </div>
 
       <div className="settings-section">
@@ -53,9 +149,18 @@ function AccountSettings() {
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
         />
-        <button className="btn-save" onClick={handleSavePassword}>
+        <button
+          className="btn-save"
+          onClick={handleSavePassword}
+          disabled={!user}
+        >
           Save password
         </button>
+        {passwordMessage && (
+          <p className={`form-message ${passwordMessage.kind}`}>
+            {passwordMessage.text}
+          </p>
+        )}
       </div>
 
       <div className="settings-actions">
