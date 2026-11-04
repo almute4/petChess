@@ -101,7 +101,10 @@ public class UserServiceImpl implements UserService {
 
         user.setUsername(userUpsertDto.getUsername());
         user.setEmail(userUpsertDto.getEmail());
-        user.setPasswordHash(passwordEncoder.encode(userUpsertDto.getPasswordHash()));
+        // Пароль меняем, только если он передан (чтобы можно было сменить одно имя).
+        if (userUpsertDto.getPasswordHash() != null && !userUpsertDto.getPasswordHash().isBlank()) {
+            user.setPasswordHash(passwordEncoder.encode(userUpsertDto.getPasswordHash()));
+        }
 
         return userMapper.toGetDto(user);
     }
