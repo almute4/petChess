@@ -16,9 +16,14 @@ java {
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io") {
+        content { includeGroup("com.github.bhlangonijr") }
+    }
 }
 
 dependencies {
+    implementation("com.github.bhlangonijr:chesslib:1.3.7")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-validation")

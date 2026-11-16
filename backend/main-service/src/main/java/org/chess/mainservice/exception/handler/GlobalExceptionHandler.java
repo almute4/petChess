@@ -2,6 +2,8 @@ package org.chess.mainservice.exception.handler;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.chess.mainservice.exception.DuplicateResourceException;
+import org.chess.mainservice.exception.GameException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,16 @@ import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(GameException.class)
+    public ResponseEntity<Map<String, String>> handleGame(GameException e) {
+        return error(e.getStatus(), e.getMessage());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, String>> handleUnreadable(HttpMessageNotReadableException e) {
+        return error(HttpStatus.BAD_REQUEST, "Invalid request body");
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(AuthenticationException.class)
@@ -49,6 +61,6 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<Map<String, String>> error(HttpStatus status, String message) {
-        return ResponseEntity.status(status).body(Map.of("message", message));
+        return ResponseEntity.status(status).body(Map.of("error", status.name(), "message", message));
     }
 }
