@@ -1,12 +1,13 @@
 services:
   db:
     image: postgres:16
+    restart: unless-stopped
     environment:
       POSTGRES_DB: chess
       POSTGRES_USER: chess
       POSTGRES_PASSWORD: chess
-    ports: ["5432:5432"]
-    volumes: [pgdata:/var/lib/postgresql]
+    ports: ["127.0.0.1:5433:5432"]
+    volumes: [pgdata16:/var/lib/postgresql/data]
 
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U chess -d chess" ]
@@ -14,4 +15,4 @@ services:
       timeout: 5s
       retries: 5
 volumes:
-  pgdata:
+  pgdata16:

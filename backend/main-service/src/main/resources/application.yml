@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/chess
-    username: chess
-    password: chess
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/chess}
+    username: ${DB_USERNAME:chess}
+    password: ${DB_PASSWORD:chess}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
