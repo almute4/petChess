@@ -35,7 +35,7 @@ export const tokenStorage = {
 // Если несколько запросов одновременно получили 401, refresh делаем один раз.
 let refreshPromise: Promise<boolean> | null = null;
 
-function refreshTokens(): Promise<boolean> {
+export function refreshTokens(): Promise<boolean> {
   const refreshToken = tokenStorage.getRefresh();
   if (!refreshToken) return Promise.resolve(false);
 
@@ -47,11 +47,10 @@ function refreshTokens(): Promise<boolean> {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ refreshToken }),
         });
-        if (!response.ok) return false;
+        if (response.status === 401 || response.status === 403) return false;
+        if (!response.ok) throw new ApiError(response.status, "Cannot refresh session. Please retry.");
         tokenStorage.set((await response.json()) as AuthTokens);
         return true;
-      } catch {
-        return false;
       } finally {
         refreshPromise = null;
       }
@@ -103,8 +102,8 @@ export async function request<T>(
 
   let response = await send();
 
-  // 403 тоже учитываем: без настроенного entry point Spring Security отдаёт 403 вместо 401.
-  if (auth && (response.status === 401 || response.status === 403)) {
+  // Refresh only expired authentication; a forbidden game remains a regular API error.
+  if (auth && response.status === 401) {
     if (await refreshTokens()) {
       response = await send();
     } else {

@@ -37,7 +37,8 @@ function App() {
         <Route path="/lobby" element={<Lobby />} />
         <Route path="/settings" element={<AccountSettings />} />
         <Route path="/history" element={<MatchHistory />} />
-        <Route path="/game" element={<Game />} />
+        <Route path="/game/:id" element={<Game />} />
+        <Route path="/game" element={<Navigate to="/lobby" replace />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/lobby" replace />} />

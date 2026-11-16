@@ -1,64 +1,30 @@
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { myGames, type GameState } from "../api/games";
+import { getErrorMessage } from "../api/client";
 
-interface Match {
-  opponent: string;
-  result: "Win" | "Loss" | "Draw";
-  moves: number;
-  date: string;
-}
-
-const matchHistory: Match[] = [
-  { opponent: "rook_runner", result: "Win", moves: 32, date: "12 Oct 2026" },
-  { opponent: "night_owl", result: "Loss", moves: 41, date: "11 Oct 2026" },
-  { opponent: "pawn_star", result: "Draw", moves: 58, date: "11 Oct 2026" },
-  { opponent: "castle_64", result: "Win", moves: 27, date: "10 Oct 2026" },
-  { opponent: "green_knight", result: "Loss", moves: 36, date: "09 Oct 2026" },
-];
-
-function getResultClass(result: string) {
-  switch (result) {
-    case "Win":
-      return "result-win";
-    case "Loss":
-      return "result-loss";
-    case "Draw":
-      return "result-draw";
-    default:
-      return "";
-  }
-}
-
-function MatchHistory() {
-  const navigate = useNavigate();
-
+export default function MatchHistory() {
+  const [games, setGames] = useState<GameState[]>([]);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    myGames().then(setGames).catch(cause => setError(getErrorMessage(cause)));
+  }, []);
   return (
     <div className="history-container">
       <h1>Match History</h1>
+      {error && <p role="alert">{error}</p>}
       <table className="history-table">
-        <thead>
-          <tr>
-            <th>Opponent</th>
-            <th>Result</th>
-            <th>Moves</th>
-            <th>Date</th>
+        <thead><tr><th>Game</th><th>Players</th><th>Result</th><th>Date</th></tr></thead>
+        <tbody>{games.map(game => (
+          <tr key={game.id}>
+            <td><Link to={`/game/${game.id}`}>#{game.id}</Link></td>
+            <td>{game.whitePlayer.username} / {game.blackPlayer?.username ?? "Waiting"}</td>
+            <td>{game.result ?? game.status}</td>
+            <td>{new Date(game.createdAt).toLocaleDateString()}</td>
           </tr>
-        </thead>
-        <tbody>
-          {matchHistory.map((match, index) => (
-            <tr key={index}>
-              <td>{match.opponent}</td>
-              <td className={getResultClass(match.result)}>{match.result}</td>
-              <td>{match.moves}</td>
-              <td>{match.date}</td>
-            </tr>
-          ))}
-        </tbody>
+        ))}</tbody>
       </table>
-      <button className="btn-back" onClick={() => navigate("/lobby")}>
-        Back to Lobby
-      </button>
+      <Link to="/lobby">Back to Lobby</Link>
     </div>
   );
 }
-
-export default MatchHistory;
