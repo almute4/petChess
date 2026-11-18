@@ -62,6 +62,10 @@ class GameIntegrationTests {
                 "{\"email\":\"" + email + "\",\"password\":\"StrongPass123\"}");
         assertThat(login.statusCode()).isEqualTo(200);
         String token = json.readTree(login.body()).get("token").asText();
+        String refreshToken = json.readTree(login.body()).get("refreshToken").asText();
+        assertThat(request("GET", "/api/users/me", refreshToken, null).statusCode()).isEqualTo(401);
+        assertThat(request("POST", "/api/auth/refresh", null,
+                "{\"refreshToken\":\"" + token + "\"}").statusCode()).isEqualTo(401);
         assertThat(request("POST", "/api/games", null, "{}").statusCode()).isEqualTo(401);
         var created = request("POST", "/api/games", token, "{}");
         assertThat(created.statusCode()).isEqualTo(201);
@@ -72,6 +76,10 @@ class GameIntegrationTests {
         assertThat(request("POST", "/api/games/" + id + "/join", token, "{}").statusCode()).isEqualTo(400);
         User black = user();
         String blackToken = token(black);
+        assertThat(request("GET", "/api/users/" + white, blackToken, null).statusCode()).isEqualTo(403);
+        assertThat(request("PUT", "/api/users/" + white, blackToken,
+                "{\"username\":\"hijacked\",\"email\":\"hijacked@example.com\"}").statusCode()).isEqualTo(403);
+        assertThat(request("GET", "/api/users", token, null).statusCode()).isEqualTo(404);
         assertThat(request("POST", "/api/games/" + id + "/join", blackToken, "{}").statusCode()).isEqualTo(200);
         assertThat(request("POST", "/api/games/" + id + "/moves", token, "{\"from\":\"z9\",\"to\":\"e4\"}")
                 .statusCode()).isEqualTo(400);

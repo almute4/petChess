@@ -2,6 +2,7 @@ package org.chess.mainservice.config;
 
 import org.chess.mainservice.security.StompAuthInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -12,14 +13,18 @@ import org.springframework.web.socket.config.annotation.*;
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final StompAuthInterceptor authentication;
+    private final String allowedOrigin;
 
-    public WebSocketConfig(StompAuthInterceptor authentication) {
+    public WebSocketConfig(StompAuthInterceptor authentication,
+                           @Value("${app.allowed-origin:http://localhost:3000}") String allowedOrigin) {
         this.authentication = authentication;
+        this.allowedOrigin = allowedOrigin;
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOriginPatterns("http://localhost:3000", "http://localhost:5173");
+        registry.addEndpoint("/ws")
+                .setAllowedOriginPatterns(allowedOrigin, "http://localhost:5173");
     }
 
     @Override

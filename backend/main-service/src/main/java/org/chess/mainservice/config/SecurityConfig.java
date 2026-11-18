@@ -33,8 +33,16 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers(
-                                "/api/users/registration",
                                 "/api/auth/**",
+                                "/",
+                                "/index.html",
+                                "/assets/**",
+                                "/login",
+                                "/register",
+                                "/lobby",
+                                "/settings",
+                                "/history",
+                                "/game/**",
                                 "/ws",
                                 "/ws/**",
                                 "/error"
@@ -51,6 +59,6 @@ public class SecurityConfig {
 
     @Bean
     PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(4);
+        return new BCryptPasswordEncoder();
     }
 }

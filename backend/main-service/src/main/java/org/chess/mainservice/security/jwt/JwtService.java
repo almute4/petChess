@@ -60,6 +60,23 @@ public class JwtService {
         return false;
     }
 
+    public boolean isAccessToken(String token) {
+        return validateJwtToken(token) && "access".equals(getTokenType(token));
+    }
+
+    public boolean isRefreshToken(String token) {
+        return validateJwtToken(token) && "refresh".equals(getTokenType(token));
+    }
+
+    private String getTokenType(String token) {
+        return Jwts.parser()
+                .verifyWith(getSignInKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("type", String.class);
+    }
+
     public String getEmailFromToken(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(getSignInKey())
@@ -73,6 +90,7 @@ public class JwtService {
         Date date = Date.from(LocalDateTime.now().plusMinutes(1).atZone(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
                 .subject(email)
+                .claim("type", "access")
                 .expiration(date)
                 .signWith(getSignInKey())
                 .compact();
@@ -82,6 +100,7 @@ public class JwtService {
         Date date = Date.from(LocalDateTime.now().plusDays(1).atZone(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
                 .subject(email)
+                .claim("type", "refresh")
                 .expiration(date)
                 .signWith(getSignInKey())
                 .compact();

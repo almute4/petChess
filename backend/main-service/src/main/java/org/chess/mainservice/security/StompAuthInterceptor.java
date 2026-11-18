@@ -34,7 +34,7 @@ public class StompAuthInterceptor implements ChannelInterceptor {
         if (headers.getCommand() == StompCommand.CONNECT) {
             String authorization = headers.getFirstNativeHeader("Authorization");
             if (authorization == null || !authorization.startsWith("Bearer ")
-                    || !jwt.validateJwtToken(authorization.substring(7))) {
+                    || !jwt.isAccessToken(authorization.substring(7))) {
                 throw new MessageDeliveryException("Valid access token required");
             }
             CustomUserDetails user = users.loadUserByUsername(jwt.getEmailFromToken(authorization.substring(7)));

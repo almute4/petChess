@@ -12,6 +12,9 @@ spring:
       hibernate:
         format-sql: true
 
+server:
+  port: ${PORT:8080}
+
 logging:
   level:
     org.hibernate.SQL: debug

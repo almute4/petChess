@@ -34,7 +34,7 @@ public class UserCredentialsDto {
     public String toString() {
         final StringBuilder sb = new StringBuilder("UserCredentialsDto{");
         sb.append("email='").append(email).append('\'');
-        sb.append(", password='").append(password).append('\'');
+        sb.append(", password='[REDACTED]'");
         sb.append('}');
         return sb.toString();
     }
